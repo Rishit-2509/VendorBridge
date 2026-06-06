@@ -1,0 +1,14 @@
+{
+  "name": "vendorbridge-erp",
+  "version": "1.0.0",
+  "description": "Procurement and Vendor Management ERP for the VendorBridge hackathon problem statement.",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.11.3",
+    "pg": "^8.13.1"
+  }
+}
