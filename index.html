@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>VendorBridge ERP – Procurement System</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<!-- ═══════════════ AUTH ═══════════════ -->
+<main id="auth" class="auth-shell">
+  <section class="auth-panel">
+    <div class="brand-lockup">
+      <div class="brand-mark">VB</div>
+      <div>
+        <h1>VendorBridge</h1>
+        <p>Procurement &amp; Vendor Management ERP</p>
+      </div>
+    </div>
+
+    <form id="loginForm" class="auth-card">
+      <div>
+        <div class="auth-title">Sign in</div>
+        <div class="auth-sub">Welcome back! Enter your credentials.</div>
+      </div>
+      <label>Email address<input id="loginEmail" type="email" value="rishitpatel2509@gmail.com" required/></label>
+      <label>Password<input id="loginPassword" type="password" value="password123" required minlength="6"/></label>
+      <label>Role
+        <select id="loginRole">
+          <option>Procurement Officer</option>
+          <option>Vendor</option>
+          <option>Manager / Approver</option>
+          <option>Admin</option>
+        </select>
+      </label>
+      <div class="auth-row">
+        <label class="check"><input type="checkbox" checked/> Keep me signed in</label>
+        <button type="button" class="link-btn" id="forgotPasswordBtn">Forgot password?</button>
+      </div>
+      <button class="primary" type="submit" style="width:100%">Login</button>
+      <button class="secondary" type="button" data-auth-switch="register" style="width:100%">Create account</button>
+      <div class="auth-help">
+        <strong>Demo accounts (password: password123)</strong>
+        <span>rishitpatel2509@gmail.com → Procurement Officer</span>
+        <span>admin@vendorbridge.local → Admin</span>
+        <span>vendor@vendorbridge.local → Vendor</span>
+        <span>approver@vendorbridge.local → Manager / Approver</span>
+      </div>
+    </form>
+
+    <form id="registerForm" class="auth-card hidden">
+      <div>
+        <div class="auth-title">Create account</div>
+        <div class="auth-sub">Fill in your details to get started.</div>
+      </div>
+      <div class="two-col">
+        <label>First name<input id="registerFirstName" required value="Rishit"/></label>
+        <label>Last name<input id="registerLastName" required value="Patel"/></label>
+      </div>
+      <label>Email address<input id="registerEmail" type="email" required value="rishitpatel2509@gmail.com"/></label>
+      <label>Password<input id="registerPassword" type="password" required minlength="6" value="password123"/></label>
+      <label>Phone<input id="registerPhone" value="+91 98765 43210"/></label>
+      <label>Role
+        <select id="registerRole">
+          <option>Procurement Officer</option>
+          <option>Manager / Approver</option>
+          <option>Vendor</option>
+          <option>Admin</option>
+        </select>
+      </label>
+      <label>Country<input id="registerCountry" value="India"/></label>
+      <button class="primary" type="submit" style="width:100%">Register</button>
+      <button class="secondary" type="button" data-auth-switch="login" style="width:100%">Back to login</button>
+    </form>
+  </section>
+</main>
+
+<!-- ═══════════════ APP ═══════════════ -->
+<div id="app" class="app hidden">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-mark">VB</div>
+      <div class="sidebar-brand-text">
+        <strong>VENDORBRIDGE</strong>
+        <span>ERP SYSTEM</span>
+      </div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">RP</div>
+      <div class="sidebar-user-info">
+        <strong id="sidebarName">Rishit Patel</strong>
+        <span id="sidebarRole">Procurement Officer</span>
+      </div>
+      <button class="sidebar-signout" id="logoutBtn" title="Sign out">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Workspace -->
+  <section class="workspace">
+    <header class="topbar">
+      <h2 class="topbar-title" id="pageTitle">Dashboard</h2>
+      <div class="topbar-actions">
+        <div class="topbar-icon" title="Toggle theme" id="themeBtn">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </div>
+        <div class="topbar-icon" title="Notifications" id="notifBtn">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── DASHBOARD ── -->
+    <section id="dashboard" class="page">
+      <div class="dash-hero">
+        <div>
+          <div class="dash-hero-label" id="dashWelcomeLabel">WELCOME BACK, RISHIT</div>
+          <h2 id="dashTitle">Procurement Officer Dashboard</h2>
+          <p>Today's overview of procurement cycles, vendor quotation status, and purchase updates.</p>
+        </div>
+        <div class="dash-hero-btns" id="dashHeroBtns">
+          <button class="btn-teal" data-goto="rfqs">+ New RFQ</button>
+          <button class="btn-dark" data-goto="vendors">Add Vendor</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon teal">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </div>
+          <div>
+            <div class="kpi-badge ytd">YTD</div>
+            <div class="kpi-value" id="kpiSpend">Rs. 0</div>
+            <div class="kpi-label">TOTAL SPEND</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon amber">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div>
+            <div class="kpi-badge active">ACTIVE</div>
+            <div class="kpi-value" id="kpiRFQs">1</div>
+            <div class="kpi-label">ACTIVE RFQS</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon red">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="kpi-badge pending">PENDING</div>
+            <div class="kpi-value" id="kpiApprovals">0</div>
+            <div class="kpi-label">PENDING APPROVALS</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon purple">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="kpi-badge partners">PARTNERS</div>
+            <div class="kpi-value" id="kpiVendors">4</div>
+            <div class="kpi-label">ACTIVE VENDORS</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Audit Actions</div>
+            <a class="view-trail" id="viewTrailBtn">View full trail →</a>
+          </div>
+          <div class="card-body" id="dashAuditList"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Operational Shortcuts</div></div>
+          <div class="card-body" id="dashShortcuts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VENDORS ── -->
+    <section id="vendors" class="page">
+      <div class="page-header">
+        <h2>Vendors</h2>
+        <button class="btn-teal" id="addVendorBtn">+ Add Vendor</button>
+      </div>
+      <div class="toolbar">
+        <div class="search-input">
+          <span class="search-input-icon">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input id="vendorSearch" placeholder="Search vendor name, email, GST..." style="padding-left:36px"/>
+        </div>
+        <select class="filter-select" id="vendorCatFilter"><option value="">All Categories</option><option>Furniture</option><option>IT Hardware</option><option>Stationery</option><option>Construction</option><option>Logistics</option></select>
+        <select class="filter-select" id="vendorStatusFilter"><option value="">All Status</option><option>Active</option><option>Pending</option><option>Blocked</option></select>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>VENDOR NAME</th><th>CATEGORY</th><th>GSTIN</th><th>CONTACT DETAILS</th><th>RATING</th><th>STATUS</th><th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="vendorRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── RFQs ── -->
+    <section id="rfqs" class="page">
+      <div class="page-header">
+        <h2>Requests for Quotation (RFQs)</h2>
+        <button class="btn-teal" id="newRFQBtn">+ Create RFQ</button>
+      </div>
+      <div class="toolbar">
+        <div class="search-input">
+          <span class="search-input-icon">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
+          <input id="rfqSearch" placeholder="Search RFQs..." style="padding-left:36px"/>
+        </div>
+        <select class="filter-select" id="rfqStatusFilter"><option value="">All Status</option><option>Draft</option><option>Published</option><option>Closed</option></select>
+      </div>
+      <div class="card rfq-table-wrap">
+        <table>
+          <thead><tr><th>RFQ TITLE</th><th>CATEGORY</th><th>DEADLINE</th><th>VENDORS</th><th>QUOTATIONS</th><th>STATUS</th><th>ACTION</th></tr></thead>
+          <tbody id="rfqRows"></tbody>
+        </table>
+      </div>
+
+      <!-- Create RFQ panel (hidden by default) -->
+      <div id="createRFQPanel" class="hidden">
+        <div class="form-card">
+          <div class="form-section-title">New Request for Quotation</div>
+          <div class="form-grid">
+            <label>RFQ Title *<input id="rfqTitle" placeholder="e.g. Office Furniture Procurement Q2"/></label>
+            <div class="two-col">
+              <label>Category<input id="rfqCategory" value="Furniture"/></label>
+              <label>Deadline *<input type="date" id="rfqDeadline"/></label>
+            </div>
+            <label>Description<textarea id="rfqDesc" rows="3" placeholder="Describe the procurement requirements..."></textarea></label>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <strong>Line Items</strong>
+              <button class="secondary" id="addLineItem">+ Add Item</button>
+            </div>
+            <table>
+              <thead><tr><th>ITEM</th><th>QTY</th><th>UNIT</th><th></th></tr></thead>
+              <tbody id="lineItems"></tbody>
+            </table>
+            <strong>Assign Vendors</strong>
+            <div class="vendor-pills" id="assignedVendors"></div>
+            <button class="secondary" id="assignVendorBtn" style="width:fit-content">+ Add Vendor</button>
+            <div class="dropzone" id="attachDropzone">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Drag &amp; drop files or click to upload</span>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="primary" id="sendRFQ">Save &amp; Send to Vendors</button>
+              <button class="secondary" id="saveDraftRFQ">Save as Draft</button>
+              <button class="secondary" id="cancelRFQ">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── QUOTATIONS ── -->
+    <section id="quotations" class="page">
+      <div class="page-header">
+        <h2>Submit Quotation</h2>
+      </div>
+      <div class="form-card">
+        <p style="color:var(--muted);margin-bottom:16px">RFQ: <strong>Office Furniture Procurement Q2</strong> – Deadline: 15 Jun 2026</p>
+        <div class="form-section-title">Quotation Items</div>
+        <table>
+          <thead><tr><th>ITEM</th><th>QTY</th><th>UNIT PRICE (Rs.)</th><th>TOTAL</th><th>DELIVERY (days)</th></tr></thead>
+          <tbody id="quoteItems"></tbody>
+        </table>
+        <div class="two-col" style="margin-top:16px">
+          <label>Tax / GST %<input type="number" id="gstInput" value="18"/></label>
+          <label>Payment Terms<input id="paymentTerms" value="Payment terms: 20 days net"/></label>
+        </div>
+        <div class="totals-box" id="quoteTotals"></div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button class="primary" id="submitQuote">Submit Quotation</button>
+          <button class="secondary">Save Draft</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── COMPARISON ── -->
+    <section id="comparison" class="page">
+      <div class="page-header"><h2>Quotation Comparison</h2></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">RFQ: Office Furniture Procurement Q2 – 3 Quotations Received</div></div>
+        <div class="card-body" style="padding-top:0">
+          <div style="overflow-x:auto">
+            <table class="comparison-table">
+              <thead><tr><th>CRITERIA</th><th>Infra Supplies <span class="badge badge-active">Lowest</span></th><th>TechCore Ltd</th><th>Office Need Co.</th></tr></thead>
+              <tbody id="comparisonRows"></tbody>
+            </table>
+          </div>
+          <p style="color:var(--muted);font-size:12px;margin-top:12px">Green highlight = lowest price. Selecting a vendor initiates the approval workflow.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── APPROVALS ── -->
+    <section id="approvals" class="page">
+      <div class="page-header"><h2>Approval Workflow</h2></div>
+      <div class="approval-layout">
+        <div class="card">
+          <div class="card-body">
+            <div class="approval-steps">
+              <div class="step-item done">✓ Submitted</div>
+              <div class="step-item done">✓ L1 Review</div>
+              <div class="step-item active">L2 Approval</div>
+              <div class="step-item">Generate PO</div>
+            </div>
+            <div class="card-title" style="margin-bottom:14px">Approval Chain</div>
+            <ul class="timeline" id="approvalTimeline">
+              <li class="timeline-item">
+                <div class="timeline-dot done"></div>
+                <div class="timeline-body">
+                  <strong>Rahul Mehta</strong> – Procurement Head
+                  <span>✓ Approved on May 20, 10:32 AM</span>
+                </div>
+              </li>
+              <li class="timeline-item">
+                <div class="timeline-dot waiting"></div>
+                <div class="timeline-body">
+                  <strong>Priya Shah</strong> – Finance Manager
+                  <span>⏳ Awaiting – Assigned May 21</span>
+                </div>
+              </li>
+            </ul>
+            <div style="margin-top:20px">
+              <label>Approval Remarks<textarea id="approvalRemark" rows="4" placeholder="Add comments or conditions..."></textarea></label>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:12px">
+              <button class="primary" id="approveBtn">Approve</button>
+              <button class="danger" id="rejectBtn">Reject</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Quotation Summary</div></div>
+          <div class="card-body">
+            <dl class="summary-dl">
+              <dt>RFQ</dt><dd>Office Furniture Procurement Q2</dd>
+              <dt>Vendor</dt><dd>Infra Supplies Pvt Ltd</dd>
+              <dt>Total</dt><dd>Rs. 2,18,772</dd>
+              <dt>Delivery</dt><dd>12 days</dd>
+              <dt>Rating</dt><dd>⭐ 4.8 / 5</dd>
+              <dt>Payment</dt><dd>30 days net</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PURCHASE ORDERS ── -->
+    <section id="pos" class="page">
+      <div class="page-header"><h2>Purchase Orders (POs)</h2></div>
+      <div class="po-layout">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">All Purchase Orders (1)</div>
+          </div>
+          <table>
+            <thead><tr><th>PO NUMBER</th><th>RFQ TITLE</th><th>VENDOR</th><th>GRAND TOTAL</th><th>STATUS</th><th>ACTION</th></tr></thead>
+            <tbody id="poRows"></tbody>
+          </table>
+        </div>
+        <div class="invoice-detail-card" id="poDetailCard">
+          <div style="color:var(--muted);text-align:center;padding:40px 0">
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" style="opacity:.3"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <p style="margin-top:10px;font-size:13px">Select a Purchase Order to view details and line items.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── INVOICES ── -->
+    <section id="invoices" class="page">
+      <div class="page-header"><h2>Invoices</h2></div>
+      <div class="po-layout">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Invoices List (1)</div></div>
+          <table>
+            <thead><tr><th>INVOICE NUMBER</th><th>PO NUMBER</th><th>VENDOR PARTNER</th><th>GRAND TOTAL</th><th>STATUS</th><th>ACTION</th></tr></thead>
+            <tbody id="invoiceRows"></tbody>
+          </table>
+        </div>
+        <div class="invoice-detail-card" id="invoiceDetailCard">
+          <div>
+            <span class="inv-badge-pending" id="invStatusBadge">PENDING PAYMENT</span>
+            <span style="float:right;font-size:12px;color:var(--muted)" id="invDate">Date: 6/6/2026</span>
+          </div>
+          <div>
+            <div class="inv-number">INV-2026-1001</div>
+            <div class="inv-po">Against PO: PO-2026-0001</div>
+          </div>
+          <div class="inv-parties">
+            <div>
+              <div class="inv-party-label">SELLER (VENDOR)</div>
+              <div class="inv-party-name">Infra Supplies Pvt Ltd</div>
+              <div class="inv-party-detail">+91 98765 43210</div>
+            </div>
+            <div>
+              <div class="inv-party-label">BUYER DETAILS</div>
+              <div class="inv-party-name">VendorBridge Enterprise</div>
+              <div class="inv-party-detail">Bangalore HQ</div>
+            </div>
+          </div>
+          <div class="inv-items">
+            <div class="inv-items-title">TAX ITEMS</div>
+            <div class="inv-item-row">
+              <div><div class="inv-item-name">Ergonomic chairs with lumbar support</div><div class="inv-item-sub">25 units @ Rs. 4500.00</div></div>
+              <div style="font-weight:700">Rs. 1,12,500</div>
+            </div>
+            <div class="inv-item-row">
+              <div><div class="inv-item-name">Motorized standing desks</div><div class="inv-item-sub">10 units @ Rs. 7290.00</div></div>
+              <div style="font-weight:700">Rs. 72,900</div>
+            </div>
+          </div>
+          <div class="inv-totals">
+            <div class="inv-total-row"><span>Subtotal:</span><span>Rs. 1,85,400</span></div>
+            <div class="inv-total-row"><span>Tax (GST 18%):</span><span>Rs. 33,372</span></div>
+            <div class="inv-total-row inv-grand"><span>Grand Total:</span><span>Rs. 2,18,772</span></div>
+          </div>
+          <div class="inv-actions">
+            <button class="inv-action-btn" onclick="window.print()">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print Invoice
+            </button>
+            <button class="inv-action-btn" id="downloadPDFBtn">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Download PDF
+            </button>
+            <button class="inv-action-btn" id="emailInvoiceBtn">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Email Invoice
+            </button>
+          </div>
+          <button class="inv-pay-btn" id="markPaidBtn">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Record Payment (Mark Paid)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ACTIVITY LOG ── -->
+    <section id="activity" class="page">
+      <div class="page-header"><h2>ERP System Audit Logs</h2></div>
+      <div class="card">
+        <div class="card-header">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted)">PROCUREMENT TRAIL TRACKER</div>
+          <select id="activityFilter" style="width:160px">
+            <option value="">All Modules</option>
+            <option value="AUTH">AUTH</option>
+            <option value="RFQ">RFQ</option>
+            <option value="QUOTATION">QUOTATION</option>
+            <option value="APPROVAL">APPROVAL</option>
+            <option value="PO">PO</option>
+            <option value="INVOICE">INVOICE</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="log-table">
+            <thead><tr><th>TIMESTAMP</th><th>MODULE</th><th>USER ACCOUNT</th><th>ACTION EVENT</th><th>EVENT DETAILS</th></tr></thead>
+            <tbody id="activityRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── REPORTS ── -->
+    <section id="reports" class="page">
+      <div class="page-header">
+        <h2>Reports &amp; Analytics</h2>
+        <button class="btn-teal" id="exportCSVBtn">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Spend CSV
+        </button>
+      </div>
+      <div class="reports-hero">
+        <div class="reports-hero-text">
+          <h3>Procurement Insights</h3>
+          <p>Monthly spending metrics, vendor breakdowns, and categories allocation.</p>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon teal">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
+          </div>
+          <div>
+            <div class="kpi-value">Rs. 0</div>
+            <div class="kpi-label">TOTAL SPEND (YTD)</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon purple">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="kpi-value">4 Vendors</div>
+            <div class="kpi-label">ACTIVE PARTNERS</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon amber">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="kpi-value">94% Fulfillment</div>
+            <div class="kpi-label">PO FULFILLMENT</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon red">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+          </div>
+          <div>
+            <div class="kpi-value">0</div>
+            <div class="kpi-label">OVERDUE INVOICES</div>
+          </div>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Spend By Business Category</div></div>
+          <div class="card-body"><div class="chart-container" id="categoryChart"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Monthly Expenditure Trend</div></div>
+          <div class="card-body"><div class="chart-container" id="monthlyChart"></div></div>
+        </div>
+      </div>
+    </section>
+
+  </section><!-- /workspace -->
+</div><!-- /app -->
+
+<!-- Add Vendor Modal -->
+<div class="modal-overlay hidden" id="addVendorModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add New Vendor</div>
+      <button class="modal-close" id="closeVendorModal">✕</button>
+    </div>
+    <label>Vendor Name *<input id="vName" placeholder="Company name"/></label>
+    <div class="two-col">
+      <label>Category<select id="vCat"><option>Furniture</option><option>IT Hardware</option><option>Stationery</option><option>Construction</option><option>Logistics</option></select></label>
+      <label>GSTIN *<input id="vGST" placeholder="29AABCS1429BZ0"/></label>
+    </div>
+    <div class="two-col">
+      <label>Contact Name<input id="vContactName" placeholder="Contact person"/></label>
+      <label>Phone<input id="vPhone" placeholder="+91 98765 43210"/></label>
+    </div>
+    <label>Email<input id="vEmail" type="email" placeholder="vendor@example.com"/></label>
+    <div style="display:flex;gap:10px">
+      <button class="primary" id="saveVendorBtn">Add Vendor</button>
+      <button class="secondary" id="cancelVendorModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
