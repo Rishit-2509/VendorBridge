@@ -1,5 +1,4 @@
-# VendorBridge 
-#ERP system
+# VendorBridge ERP 
 
 VendorBridge ERP is a Procurement & Vendor Management System that helps organizations manage vendors, RFQs, quotations, purchase orders, invoices, and approvals from a single platform.
 
